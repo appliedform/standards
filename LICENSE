@@ -1,0 +1,37 @@
+# Licensing
+
+This repository is deliberately split. The schema and the tooling are open so that
+Standards can be a reference other people build against; the catalogue is the product.
+
+| What | Licence | File |
+|---|---|---|
+| The schema (`schema/*.md`) | CC BY 4.0 | `LICENSE-SCHEMA` |
+| The tooling (`schema/compile.py`, `mcp/server.py`, `tests/`) | MIT | `LICENSE-CODE` |
+| **Instrument** — the free flagship (`packs/instrument/`) | CC BY 4.0 | `packs/instrument/LICENSE` |
+
+Everything in this repository is covered by one of the three licences above.
+
+The rest of the catalogue — Broadsheet, Raw, Agitprop, Contra and Cornice — is proprietary
+and is not published here. So are the proof grids, the handoff pack and the commercial
+material. © 2026 Applied Form. All rights reserved.
+
+## Why this split
+
+The schema is the argument, and an argument nobody can adopt is not a standard. Opening it
+costs a licence fee that was never going to be charged and buys the position of reference
+implementation. Instrument is open for the same reason it is free: a system installed as
+somebody's default is worth more than a system sold once.
+
+The other five are the catalogue, and the catalogue is what is for sale. They live in a
+separate repository, which is why this one is safe to read end to end.
+
+## Attribution
+
+For the CC BY 4.0 material, attribute as: *Standards by Applied Form —
+https://github.com/jordanberkowitz-afk/standards*
+
+## Note
+
+Every system in this repository extends a design tradition. No organisation's marks,
+logotypes or identities are reproduced, and nothing here is affiliated with or endorsed by
+any institution referenced. Type is open licence throughout; see `HANDOVER.md` section 11.

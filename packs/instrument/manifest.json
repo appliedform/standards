@@ -1,0 +1,35 @@
+{
+  "name": "Instrument \u2014 a Standards pack",
+  "publisher": "Applied Form",
+  "version": "1.0.0",
+  "schema": "v0.4",
+  "type": "design-system",
+  "description": "Instrument, a house-style system for AI-assisted work.",
+  "entry": "AGENTS.md",
+  "instructions": {
+    "frontier": "SKILL.md",
+    "compact": "SKILL-compact.md",
+    "reference": "REFERENCE.md"
+  },
+  "contracts": {
+    "tokens": "tokens.json",
+    "archetypes": "archetypes.json"
+  },
+  "assets": {
+    "css": "assets/tokens.css",
+    "chartTheme": "assets/chart-theme.json",
+    "matplotlib": "assets/instrument.mplstyle"
+  },
+  "templates": {
+    "document": "Instrument-report.docx",
+    "deck": "Instrument-deck.pptx"
+  },
+  "constraints": {
+    "coreCount": 18,
+    "compactCount": 18,
+    "budget": 20,
+    "note": "Instruction-following degrades as constraints accumulate. Adding rules to the core costs compliance on the rules already there."
+  },
+  "typeLicence": "open",
+  "attribution": "Extends a design tradition. Reproduces no organisation's marks. Not affiliated with or endorsed by any institution referenced."
+}

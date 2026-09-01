@@ -1,0 +1,91 @@
+---
+name: instrument
+description: "Apply the Instrument design system — technical modernism — to any document, deck, page, interface or chart. Use whenever the user asks for output in Instrument, says 'use my house style' and Instrument is their installed system, or asks for a report, deck, data page, dashboard or technical document that should look designed rather than default. Public Sans and DM Mono on white, an ink band, high density, signal red used once. Descended from the institutional graphic programmes of the 1960s and 70s."
+---
+
+
+# Instrument
+
+A Standards pack, from Applied Form. Technical modernism. The page is an instrument: every mark earns its place by carrying
+information.
+
+> **Compact build.** Clustered by category with precedence made explicit, for
+> small and fast models. On a frontier model use `SKILL.md` instead — the extra
+> structure costs tokens and returns nothing there.
+
+## 0 · Floors — never varied — these override everything below
+Body contrast 4.5:1, display 3:1. Colour never the only signal. Focus always visible.
+Measure ceiling 66ch. Open-licence type only.
+
+## 1 · Before producing anything, answer these four
+1. **Which artefact?** Report page · essay opening · deck spread · product screen · poster · chart-and-table.
+2. **Which archetype?** Pick from the table below by the job it does, not by how it looks.
+3. **Is this a load-bearing surface?** If yes, nothing changes. Instrument has no signature
+   device to suspend, which is why it needs no second register.
+4. **What is the one loud element?** One per eight. If you cannot name it, there isn't one.
+
+## 2 · Archetypes
+Indexed by the job they do. `When` is the trigger; `Why` is what it buys.
+
+| Job | Move | When |
+| --- | --- | --- |
+| Evidence | **Datum** | One figure reframes the section |
+| Evidence | **Plate** | A figure needs a number and caption to be cited later |
+| Evidence | **Register** | Three or four figures state the position together |
+| Structure | **Key** | A legend must be understood before the data |
+| Structure | **Matrix** | Two variables must be crossed |
+| Narrative | **Band statement** | A section must be declared, not introduced |
+| Change | **Series** | The same measure across periods |
+| Transaction | **Schedule** | Scope, cost or duration must be stated exactly |
+| Wayfinding | **Running index** | Past page two of a long document |
+
+The set is open. A valid addition makes a specific class of data more legible.
+
+## 3 · Conflict register
+When two rules collide, this decides. Where it is silent, the higher-level rule wins.
+
+| Collision | Resolution |
+|---|---|
+| Density vs measure ceiling | Measure wins. Add columns, never lengthen the line |
+| Signal vs contrast floor | Floor wins. Red never carries small text on white |
+| Band vs format | On 1:1 the band is three units |
+| Datum scale vs display contrast | Contrast wins. Reduce size before reducing contrast |
+
+## 4 · The invariant element
+A solid ink band, four base units deep, full measure, title reversed at 100% white. It
+appears on every artefact. On a 1:1 format it drops to three units. This is the mark.
+
+## 5 · Materials
+**Type.** Public Sans for everything textual, 400/600/800, sentence case. DM Mono for every
+numeral, unit, identifier, column header and label — no exceptions, and never for running
+prose. Measure never exceeds 66 characters. Never serif, never italic.
+
+**Colour.** Only these five.
+
+| Token | Value | Role |
+|---|---|---|
+| `--ground` | `#FFFFFF` | The only ground |
+| `--ink` | `#111111` | All text, the band, primary fills |
+| `--rule` | `#D8D8D8` | Hairlines, table rules |
+| `--muted` | `#6B6B6B` | Labels, secondary data, captions |
+| `--signal` | `#C8102E` | Identification, one point of emphasis, interaction |
+
+Signal red is never a data series. On any one surface it carries exactly one meaning and
+nothing else: clickable where the surface is interactive, emphasis where it is static.
+
+**Grid.** 12 columns, 24px gutter, 8px base unit. Spacing 8/16/24/32/48/64/96. Nothing off
+the scale.
+
+**Imagery.** None permitted. Type, rule and data carry the visual load.
+
+**Ornament.** None. Rules are structural, never decorative. No border radius, no shadow, no gradient.
+
+---
+
+## 6 · Before finalising
+Verify every numbered section above is satisfied. Where two rules collide, the
+conflict register decides; where it is silent, the lower-numbered section wins.
+
+### Floors — never varied — restated
+Body contrast 4.5:1, display 3:1. Colour never the only signal. Focus always visible.
+Measure ceiling 66ch. Open-licence type only.

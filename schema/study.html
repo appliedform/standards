@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Schema study — Standards by Applied Form</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--white:#FFF;--ink:#2B2420;--muted:#6E6153;--rule:#E4DED4;--paper:#FAF4EA;
+  --terra:#B0542E;--terra-deep:#8A3F20;--pos:#4C7A6E;--caut:#C58A1E;--crit:#A33625;
+  --focus:#FFDD00;--u:8px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--white);color:var(--ink);font-family:"Libre Franklin",system-ui,sans-serif;
+  font-size:18px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.mono{font-family:"IBM Plex Mono",monospace}
+.label{font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:500;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted)}
+a{color:var(--terra-deep)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;box-shadow:0 0 0 5px var(--ink)}
+button{font-family:"Libre Franklin",sans-serif;font-size:16px;font-weight:600;padding:12px 22px;
+  border:1px solid var(--ink);background:var(--ink);color:#fff;border-radius:0;cursor:pointer}
+button.s{background:#fff;color:var(--ink)}
+button:disabled{opacity:.35;cursor:not-allowed}
+input[type=password],textarea{width:100%;padding:11px 13px;border:1px solid var(--rule);border-radius:0;
+  font-family:"IBM Plex Mono",monospace;font-size:13px;background:#fff;color:var(--ink)}
+textarea{min-height:230px;line-height:1.55;resize:vertical}
+
+header{border-bottom:2px solid var(--ink);padding:calc(var(--u)*4) calc(var(--u)*4) calc(var(--u)*3)}
+main{padding:calc(var(--u)*4);max-width:1560px;margin:0 auto}
+h1{font-size:26px;font-weight:700;margin:var(--u) 0 0;letter-spacing:-.01em}
+h2{font-size:20px;font-weight:700;margin:0 0 var(--u);padding-bottom:var(--u);border-bottom:1px solid var(--rule)}
+p.hint{color:var(--muted);font-size:16px;max-width:70ch;margin:var(--u) 0 calc(var(--u)*2)}
+
+/* progress */
+.prog{display:flex;gap:4px;margin-top:calc(var(--u)*2)}
+.prog i{flex:1;height:7px;background:var(--rule);display:block}
+.prog i.done{background:var(--pos)}
+.prog i.now{background:var(--terra)}
+.progmeta{display:flex;justify-content:space-between;margin-top:6px;flex-wrap:wrap;gap:var(--u)}
+
+section{margin-bottom:calc(var(--u)*5)}
+.card{border:1px solid var(--rule)}
+.card>.h{display:flex;justify-content:space-between;align-items:baseline;gap:var(--u);
+  padding:11px 16px;border-bottom:1px solid var(--rule);background:var(--paper);flex-wrap:wrap}
+.card>.h .id{font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:600}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--u)*3)}
+@media(max-width:1000px){.pair{grid-template-columns:1fr}}
+iframe{width:100%;height:300px;border:0;background:#fff;display:block;transition:height .15s}
+
+.votes{display:flex;gap:calc(var(--u)*1.5);flex-wrap:wrap;align-items:center;margin-top:calc(var(--u)*3)}
+.q{border-left:3px solid var(--terra);padding:calc(var(--u)*1.5) 0 calc(var(--u)*1.5) calc(var(--u)*2);
+  margin:calc(var(--u)*4) 0 0}
+.q .ask{font-weight:600}
+.q .why{color:var(--muted);font-size:15.5px;max-width:74ch;margin-top:4px}
+
+.status{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--muted);display:flex;
+  align-items:center;gap:var(--u)}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--muted);display:inline-block}
+.dot.run{background:var(--caut)}.dot.ok{background:var(--pos)}.dot.err{background:var(--crit)}
+
+table{border-collapse:collapse;width:100%;font-size:16px;margin-top:var(--u)}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--rule)}
+th{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);font-weight:500;border-bottom:1.5px solid var(--ink)}
+td.n{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;text-align:right}
+.verdict{border:1px solid var(--ink);padding:calc(var(--u)*3);margin-top:calc(var(--u)*3);background:var(--paper)}
+.verdict .big{font-size:22px;font-weight:700;margin-bottom:var(--u)}
+details{margin-top:calc(var(--u)*3);border-top:1px solid var(--rule);padding-top:calc(var(--u)*2)}
+summary{cursor:pointer;font-weight:600;font-size:16px}
+.hidden{display:none}
+.setup{border:1px solid var(--rule);padding:calc(var(--u)*3);background:var(--paper);margin-bottom:calc(var(--u)*4)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="label">Standards by Applied Form · schema study</div>
+  <h1>Does precedence change what the model does?</h1>
+  <div class="prog" id="prog"></div>
+  <div class="progmeta">
+    <span class="label" id="progLabel">Not started</span>
+    <span class="label" id="progCount"></span>
+  </div>
+</header>
+
+<main>
+
+  <div class="setup" id="setup">
+    <div class="label" style="margin-bottom:6px">Anthropic API key — only needed when running this file locally</div>
+    <input id="apikey" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-…">
+    <p class="hint" style="margin-bottom:0">Held in this tab only. Never stored, never sent anywhere but the API.
+      Running this as a Claude artifact needs no key. The full study is 7 briefs × 4 generations = 28 calls.</p>
+  </div>
+
+  <section id="payloadPanel">
+    <h2>Payload</h2>
+    <p class="hint" id="payloadNote"></p>
+    <div class="votes">
+      <button class="s" data-payload="builds">Shipped builds</button>
+      <button class="s" data-payload="instrument">Instrument</button>
+      <button class="s" data-payload="contra">Contra</button>
+      <span class="status"><span class="label" id="payloadState"></span></span>
+    </div>
+  </section>
+
+  <section id="modelPanel">
+    <h2>Target model</h2>
+    <p class="hint">The variable that decides everything. Published work finds precedence-style
+      restructuring recovers roughly +11 points of instruction-following on the weakest model
+      tested and essentially nothing on the strongest. Results are stored per model, so running
+      both is the experiment.</p>
+    <div class="votes">
+      <button class="s" data-model="claude-haiku-4-5">Haiku · small</button>
+      <button class="s" data-model="claude-sonnet-4-6">Sonnet · frontier</button>
+      <span class="status"><span class="label" id="modelState"></span></span>
+    </div>
+  </section>
+
+  <section id="genPanel">
+    <h2>Phase 1 · generate</h2>
+    <p class="hint">Twenty-eight artefacts: seven briefs, two schema variants, two runs each. Sequential with
+      backoff, so it takes roughly fifteen to twenty minutes unattended. Everything is cached as it lands — close
+      the tab, come back, press it again and it resumes from where it stopped. Once this is done, reviewing has
+      no waiting in it at all.</p>
+    <div class="prog" id="genProg"></div>
+    <div class="progmeta">
+      <span class="label" id="genLabel">Nothing generated yet</span>
+      <span class="label" id="genCount"></span>
+    </div>
+    <div class="votes">
+      <button id="genAll">Generate all</button>
+      <button id="genStop" class="s hidden">Stop</button>
+      <button id="toReview" class="s" disabled>Go to review</button>
+      <button id="wipeGen" class="s">Clear generated</button>
+    </div>
+  </section>
+
+  <section id="stage">
+    <h2 id="stageTitle">Phase 2 · review</h2>
+    <p class="hint" id="stageHint">Each brief runs twice through each schema variant. You answer two questions per
+      brief: which is <b>stronger</b>, and which variant is more <b>consistent with itself</b>. The second question is
+      the one that matters — a flat structure should drift more between runs, because every rule collision gets
+      resolved differently each time.</p>
+    <div class="votes">
+      <button id="start">Start review</button>
+      <button id="resume" class="s hidden">Resume</button>
+      <button id="skip" class="s hidden">Skip this brief</button>
+      <span class="status"><span class="dot" id="dot"></span><span id="statusText">Ready</span></span>
+    </div>
+  </section>
+
+  <!-- Q1 quality -->
+  <section id="qual" class="hidden">
+    <div class="q"><div class="ask" id="q1ask">Which is stronger?</div>
+      <div class="why">Judge the artefact, not the aesthetic. Does it follow the system, resolve its own
+        collisions, and look decided rather than averaged?</div></div>
+    <div class="pair" style="margin-top:calc(var(--u)*3)">
+      <div class="card"><div class="h"><span class="id">LEFT</span><span class="label" id="revL">hidden</span></div>
+        <iframe id="fL" title="Left output" sandbox="allow-same-origin"></iframe></div>
+      <div class="card"><div class="h"><span class="id">RIGHT</span><span class="label" id="revR">hidden</span></div>
+        <iframe id="fR" title="Right output" sandbox="allow-same-origin"></iframe></div>
+    </div>
+    <div class="votes">
+      <button class="s" data-q1="left">Left is stronger</button>
+      <button class="s" data-q1="right">Right is stronger</button>
+      <button class="s" data-q1="none">No real difference</button>
+    </div>
+  </section>
+
+  <!-- Q2 drift -->
+  <section id="drift" class="hidden">
+    <div class="q"><div class="ask">Which variant is more consistent with itself?</div>
+      <div class="why">Each column is the same schema run twice on the same brief. Look for agreement in structure,
+        hierarchy and how collisions were resolved — not for which pair you prefer.</div></div>
+    <div class="pair" style="margin-top:calc(var(--u)*3)">
+      <div class="card"><div class="h"><span class="id">VARIANT X</span><span class="label" id="revX">hidden</span></div>
+        <iframe id="fX1" title="X run 1" sandbox="allow-same-origin"></iframe>
+        <div style="border-top:1px solid var(--rule)"></div>
+        <iframe id="fX2" title="X run 2" sandbox="allow-same-origin"></iframe></div>
+      <div class="card"><div class="h"><span class="id">VARIANT Y</span><span class="label" id="revY">hidden</span></div>
+        <iframe id="fY1" title="Y run 1" sandbox="allow-same-origin"></iframe>
+        <div style="border-top:1px solid var(--rule)"></div>
+        <iframe id="fY2" title="Y run 2" sandbox="allow-same-origin"></iframe></div>
+    </div>
+    <div class="votes">
+      <button class="s" data-q2="X">X is more consistent</button>
+      <button class="s" data-q2="Y">Y is more consistent</button>
+      <button class="s" data-q2="none">Equally consistent</button>
+    </div>
+  </section>
+
+  <section id="results">
+    <h2>Results</h2>
+    <div id="tally"></div>
+    <div class="votes">
+      <button id="export" class="s">Export results</button>
+      <button id="clear" class="s">Clear and start over</button>
+    </div>
+  </section>
+
+  <details>
+    <summary>The two schema variants — substance identical, structure different</summary>
+    <div class="pair" style="margin-top:calc(var(--u)*2)">
+      <div><div class="label" style="margin-bottom:6px">A · flat</div><textarea id="schemaA" spellcheck="false"></textarea></div>
+      <div><div class="label" style="margin-bottom:6px">B · layered, precedence-ordered</div><textarea id="schemaB" spellcheck="false"></textarea></div>
+    </div>
+    <p class="hint">Keep the content matched. If one variant says something the other does not, the study measures
+      content rather than structure and the result is worthless.</p>
+  </details>
+
+</main>
+
+<script>
+/* ---------- the seven briefs, from brief-library.md ---------- */
+const BRIEFS=[
+ {id:"technical",label:"Technical results",text:"A technical results page: heading, one sentence of interpretation, a four-row data table, one headline figure, an uncertainty note and a source line. Subject: calibration drift in a sensor array under thermal load, where the response shifts from linear to hysteretic above 50 °C. Illustrative data."},
+ {id:"board",label:"Board update",text:"A quarterly board update: heading, one sentence of interpretation, a four-row metrics table, one headline figure, a note on what changed, and an attribution line. Subject: a quarter where revenue, customers and retention all improved but cost of acquisition rose faster than any of them."},
+ {id:"investor",label:"Investor spread",text:"An investor deck spread: context label, one claim at display scale, a supporting subhead, three attributed figures and one line of context. Subject: a market timing claim — adoption in a category inflects after a threshold most buyers have not yet crossed."},
+ {id:"onepager",label:"Sales one-pager",text:"A sales one-pager read without a presenter: product name, one-line positioning, the problem in two sentences, three capability blocks, one proof point, and how to start. Subject: a scheduling tool for field teams where the bottleneck is dispatch latency, not travel."},
+ {id:"memo",label:"Decision memo",text:"An internal decision memo: title, the decision stated up front, three sentences of context, an options table with a recommendation, what could go wrong, and what happens next and by when. Subject: whether to consolidate two overlapping internal tools or keep both."},
+ {id:"product",label:"Product screen",text:"A load-bearing product screen: masthead, a list of six records with status across four states, one primary action, a secondary action, and a summary of what needs attention. Subject: a document review queue."},
+ {id:"notice",label:"Customer notice",text:"A customer announcement: subject line, what changed in one sentence, what it means for the reader, what they need to do, when, and who to contact. Subject: a scheduled infrastructure migration requiring no customer action, with a two-week window and a one-hour fallback."}
+];
+
+const SCHEMA_A=`TECHNICAL MODERNISM — flat structure
+
+1. IDENTITY
+Name: Instrument. Lineage: institutional graphic programmes of the 1960s-70s.
+Refuses: decoration, photography, gradient, shadow, rounded corners, italic.
+
+2. TYPE
+Public Sans (text and headings, 400-800). DM Mono for every numeral, unit, identifier
+and column header. Sentence case. Measure 66ch maximum.
+
+3. COLOUR
+White #FFFFFF ground. Ink #111111. Rule #D8D8D8. Muted #6B6B6B. Signal red #C8102E.
+Signal red is for identification and single-point emphasis only, never a data series.
+
+4. SPATIAL SYSTEM
+12-column grid, 24px gutter, 8px base unit. Spacing 8/16/24/32/48/64/96.
+Permitted ratios: 1:1, 2:3, 3:2, 4:3, 16:9.
+
+5. INVARIANT ELEMENT
+A solid ink band, 4 base units deep, full measure, title reversed at 100% white.
+On 1:1 formats the band is 3 units.
+
+6. ARCHETYPES
+Datum: one figure at large size in mono, small label above.
+Register: labelled data blocks aligned to a shared baseline.
+Plate: a bordered figure with a numbered caption.
+Key: a legend or index treated as a designed element.
+Matrix: two variables crossed in a grid.
+Band statement: the ink band carrying a section declaration.
+Schedule: scope, cost or duration stated exactly.
+Running index: position marker from page two onwards.
+
+7. DENSITY AND ATTENTION
+Density high. One loud element in eight. Hero moves are Datum and Plate.
+
+8. STATE ENCODING
+Glyph plus word plus hairline weight. Triangle Approved, square In review,
+circle Blocked, outline square Queued. Must read identically in one colour.
+
+9. INTERACTION
+Signal red means clickable on an interactive surface and emphasis on a static one,
+never both on the same surface.
+
+10. DATA TREATMENT
+DM Mono, tabular figures, right-aligned. Units always stated. Headers tracked
+uppercase in muted with a 1.5px ink rule beneath. Series order: ink, muted, signal.
+
+11. PROHIBITIONS
+No serif. No colour beyond the five. No decorative imagery. No centred text except in
+the band. No border radius. No shadow. No gradient. No italic. Nothing off the 8px scale.
+
+12. FLOORS
+Body contrast 4.5:1, display 3:1. Colour never the only signal. Focus always visible.
+Measure ceiling 66ch. Open-licence type only.
+
+13. FAILURE MODE
+Pastiche reads as a Swiss poster tribute: oversized ranged-left sans, arbitrary red
+square. Every element must be doing informational work.`;
+
+const SCHEMA_B=`TECHNICAL MODERNISM — layered, precedence-ordered
+
+PRECEDENCE: Layer 0 overrides everything below it. Where two rules inside a layer
+collide, the conflict register decides. Where the register is silent, the higher
+layer wins.
+
+LAYER 0 — INVARIANTS (override everything below)
+Body contrast 4.5:1, display 3:1. Colour never carries meaning alone. Focus always
+visible. Measure ceiling 66ch. Open-licence type only. No asset dependency.
+
+LAYER 1 — POSITION
+Instrument. Lineage: institutional graphic programmes of the 1960s-70s.
+Stance: the page is an instrument. Every mark earns its place by carrying information.
+Refuses: decoration, photography, gradient, shadow, rounded corners, italic.
+
+LAYER 2 — CANON
+Permitted formats: 1:1, 2:3, 3:2, 4:3, 16:9. No others.
+Invariant element: a solid ink band, 4 base units deep, full measure, title reversed
+at 100% white, present on every artefact. On 1:1 the band is 3 units.
+Production constraints: legible at 6pt and at 3m. Screen and print.
+
+LAYER 3 — MATERIALS
+Type: permitted set with a default. Default Public Sans (text and headings, 400-800).
+  DM Mono mandatory for every numeral, unit, identifier and column header.
+  Sentence case. [prohibition local to type: no serif, no italic]
+Colour: White #FFFFFF ground, Ink #111111, Rule #D8D8D8, Muted #6B6B6B,
+  Signal red #C8102E. [prohibition local to colour: no sixth colour; signal red is
+  identification and single-point emphasis only, never a data series]
+Imagery stance: none permitted. Type, rule and data carry the visual load.
+Ornament: none. Rules are structural, never decorative.
+State encoding: glyph + word + hairline weight, together. Triangle Approved,
+  square In review, circle Blocked, outline square Queued. Reads identically in one colour.
+Interaction colour: signal red, and nowhere else. On an interactive surface it means
+  clickable; on a static one it means emphasis. Never both on one surface.
+
+LAYER 4 — COMPOSITION
+Spatial strategy: orthogonal column grid. 12 columns, 24px gutter, 8px base unit.
+  Spacing 8/16/24/32/48/64/96. [prohibition local to spacing: nothing off the scale]
+Archetypes, indexed by rhetorical job:
+  EVIDENCE  Datum   — when one figure reframes the section
+  EVIDENCE  Plate   — when a figure must be citable later
+  EVIDENCE  Register— when three or four figures state the position together
+  STRUCTURE Key     — when a legend must be understood before the data
+  STRUCTURE Matrix  — when two variables must be crossed
+  NARRATIVE Band statement — when a section must be declared, not introduced
+  CHANGE    Series  — when the same measure runs across periods
+  TRANSACTION Schedule — when scope, cost or duration must be stated exactly
+  WAYFINDING Running index — when past page two of a long document
+Density: high. The highest information rate the floors permit.
+Attention budget: one loud element in eight. Hero moves are Datum and Plate only.
+
+LAYER 5 — VARIATION
+Variation budget: low. The frame is fixed so attention goes to the data.
+Product register: none required. This system has no signature device to suspend.
+
+LAYER 6 — COMPILATION AND CONTROL
+Data treatment: DM Mono, tabular figures, right-aligned. Units always stated.
+Headers tracked uppercase in muted with a 1.5px ink rule. Series: ink, muted, signal.
+CONFLICT REGISTER
+  Density vs measure ceiling      -> measure wins. Add columns, never lengthen the line.
+  Signal red vs contrast floor    -> floor wins. Red never carries small text on white.
+  Band vs format                  -> on 1:1 the band is 3 units, not 4.
+  Datum scale vs display contrast -> contrast wins. Reduce size before reducing contrast.
+  Archetype vs density            -> density wins. Drop the archetype, keep the data.
+FAILURE MODES
+Pastiche reads as a Swiss poster tribute: oversized ranged-left sans, arbitrary red
+square. Every element must be doing informational work.`;
+
+const CONTRA_A=`CONTRA — EXPRESSIVE POSTMODERN — flat structure
+
+1. IDENTITY
+Name: Contra. Lineage: postmodern and deconstructive practice, 1980s-90s.
+The rules are visible because they are being broken: a disciplined base, and a fixed
+countable allowance spent on violation.
+Refuses: uncounted deviation, more than one disruption per artefact, breaks that damage
+reading order or contrast, texture standing in for ideas.
+
+2. TYPE
+Instrument Serif for display, italic structural. Bricolage Grotesque for text, 400-800.
+Space Mono for data, labels and break annotations. Measure 62ch.
+
+3. COLOUR
+White #FFFFFF ground. Ink #16151A. Cyan #0090C4. Pink #D4187A. Muted #5E5A64.
+Cyan is interaction only: links, buttons, controls.
+Pink is expression only: the seam node, break markers. Pink is never clickable.
+
+4. SPATIAL SYSTEM
+Orthogonal base grid, 8px base unit, with declared local departures. The base grid must
+be visible enough that any departure reads as intentional.
+
+5. INVARIANT ELEMENT
+The seam: a 1px ink rule crossing the page with a pink node 64px from the left.
+Crossed, overlapped and interrupted, but never removed.
+
+6. DEVIATION GRAMMAR
+May break: scale relationships, axis alignment, colour role, figure/ground.
+Must survive: reading order, contrast floors, focus visibility, measure ceiling, the seam.
+Rate: one disruption per artefact. Two only if they are of different kinds.
+Never: rotation of body text, illegible overlap, colour alone carrying status.
+Accounting: label every break in situ, e.g. "Break 01 - crossing rule", and print the
+budget in the footer. Five available, typically two spent.
+
+7. ARCHETYPES
+Crossed statement: a rule cutting through display type.
+Off-axis aside: a field rotated one degree off the grid.
+Scale clash: two ideas of unequal weight set at very different sizes.
+Annotated figure: data with an argument attached to a specific point.
+Exploded frame: a structure shown coming apart.
+Overlap: two states shown coexisting.
+Plain ask: the close, with no breaks spent.
+Seam marker: the invariant made findable.
+
+8. DENSITY AND ATTENTION
+Density variable by artefact, declared per piece, never drifting.
+One loud artefact in five, and the loud one is where the budget is spent in full.
+
+9. STATE ENCODING
+Word plus glyph plus tint, with the glyph doing the work.
+Status never sits inside a broken element.
+
+10. PRODUCT REGISTER
+On a load-bearing surface the deviation budget drops to zero and the seam becomes the only
+signature. Instrument Serif is confined to the header; Bricolage carries the interface.
+
+11. DATA TREATMENT
+Space Mono. Charts obey the base grid. If a break is spent on a chart it is in the
+annotation, never in the axis. A broken axis is a fault.
+
+12. PROHIBITIONS
+No uncounted deviation. No more than one disruption per artefact. No break that damages
+reading order or contrast. No texture standing in for ideas. No pink control.
+
+13. FLOORS
+Body contrast 4.5:1, display 3:1. Colour never the only signal. Focus always visible.
+Measure ceiling 62ch. Open-licence type only. Every break must survive greyscale.
+
+14. FAILURE MODE
+Pastiche reads as nineties nostalgia: random rotation, gratuitous overlap, ransom-note
+type. Count the breaks. If they cannot be counted and named, they are not deliberate.`;
+
+const CONTRA_B=`CONTRA — EXPRESSIVE POSTMODERN — layered, precedence-ordered
+
+PRECEDENCE: Layer 0 overrides everything below it. Where two rules inside a layer collide,
+the conflict register decides. Where the register is silent, the higher layer wins.
+
+LAYER 0 — INVARIANTS (override everything below)
+Body contrast 4.5:1, display 3:1. Colour never carries meaning alone. Focus always visible.
+Measure ceiling 62ch. Open-licence type only. Every break must survive greyscale.
+
+LAYER 1 — POSITION
+Contra. Lineage: postmodern and deconstructive practice, 1980s-90s.
+Stance: the rules are visible because they are being broken. A disciplined base, and a
+fixed countable allowance spent on violation.
+Refuses: uncounted deviation, more than one disruption per artefact, breaks that damage
+reading order or contrast, texture standing in for ideas.
+
+LAYER 2 — CANON
+Invariant element: the seam — a 1px ink rule crossing the page with a pink node 64px from
+the left. Crossed, overlapped and interrupted, but never removed.
+
+LAYER 3 — MATERIALS
+Type: Instrument Serif (display, italic structural). Bricolage Grotesque (text, 400-800).
+  Space Mono (data, labels, break annotations).
+Colour: White #FFFFFF ground, Ink #16151A, Cyan #0090C4, Pink #D4187A, Muted #5E5A64.
+  [prohibition local to colour] Cyan is interaction only. Pink is expression only and is
+  never clickable. A pink control or a cyan flourish is a fault.
+State encoding: word + glyph + tint, with the glyph doing the work. Status never sits
+  inside a broken element.
+
+LAYER 4 — COMPOSITION
+Spatial strategy: orthogonal base with declared local departures. The base grid must be
+  visible enough that the departure reads as intentional. 8px base unit.
+Archetypes, indexed by rhetorical job:
+  NARRATIVE   Crossed statement — a rule cutting through display type
+  NARRATIVE   Off-axis aside    — a field rotated one degree off the grid
+  NARRATIVE   Scale clash       — two ideas of unequal weight at very different sizes
+  EVIDENCE    Annotated figure  — data with an argument attached to a specific point
+  STRUCTURE   Exploded frame    — a structure shown coming apart
+  CHANGE      Overlap           — two states shown coexisting
+  TRANSACTION Plain ask         — the close, with no breaks spent
+  WAYFINDING  Seam marker       — the invariant made findable
+Density: variable by artefact, declared per piece, never drifting.
+Attention budget: one loud artefact in five, and the loud one is where the budget is
+  spent in full.
+
+LAYER 5 — VARIATION
+Deviation grammar:
+  May break    — scale relationships, axis alignment, colour role, figure/ground.
+  Must survive — reading order, contrast floors, focus visibility, measure ceiling, the seam.
+  Rate         — one disruption per artefact. Two only if of different kinds.
+  Never        — rotation of body text, illegible overlap, colour alone carrying status.
+  Accounting   — label every break in situ, e.g. "Break 01 - crossing rule", and print the
+                 budget in the footer. Five available, typically two spent.
+Product register: on a load-bearing surface the deviation budget drops to zero and the seam
+  becomes the only signature. Instrument Serif is confined to the header; Bricolage carries
+  the interface. A break on a working surface is a fault, not a spend.
+
+LAYER 6 — COMPILATION AND CONTROL
+Data treatment: Space Mono. Charts obey the base grid. If a break is spent on a chart it is
+in the annotation, never in the axis.
+CONFLICT REGISTER
+  Break vs reading order        -> reading order wins, absolutely.
+  Pink vs interaction colour    -> cyan is interactive, pink never is. No exceptions.
+  Budget vs composition         -> budget wins. If the page needs a third break, the page is wrong.
+  Overlap vs contrast floor     -> floor wins. Reduce overlap, never opacity.
+  Scale clash vs measure ceiling-> measure wins. Reduce display size, never widen the line.
+  Broken axis vs data treatment -> data treatment wins. A broken axis is a fault.
+FAILURE MODES
+Pastiche reads as nineties nostalgia: random rotation, gratuitous overlap, ransom-note
+type. Count the breaks. If they cannot be counted and named, they are not deliberate.`;
+
+const BUILDS = {"frontier": "# Instrument\n\nA Standards pack, from Applied Form. Technical modernism. The page is an instrument: every mark earns its place by carrying\ninformation.\n\n## Floors \u2014 never varied\nBody contrast 4.5:1, display 3:1. Colour never the only signal. Focus always visible.\nMeasure ceiling 66ch. Open-licence type only.\n\n## Before producing anything, answer these four\n1. **Which artefact?** Report page \u00b7 essay opening \u00b7 deck spread \u00b7 product screen \u00b7 poster \u00b7 chart-and-table.\n2. **Which archetype?** Pick from the table below by the job it does, not by how it looks.\n3. **Is this a load-bearing surface?** If yes, nothing changes. Instrument has no signature\n   device to suspend, which is why it needs no second register.\n4. **What is the one loud element?** One per eight. If you cannot name it, there isn't one.\n\n## Materials\n**Type.** Public Sans for everything textual, 400/600/800, sentence case. DM Mono for every\nnumeral, unit, identifier, column header and label \u2014 no exceptions, and never for running\nprose. Measure never exceeds 66 characters.\n\n**Colour.** Only these five.\n\n| Token | Value | Role |\n|---|---|---|\n| `--ground` | `#FFFFFF` | The only ground |\n| `--ink` | `#111111` | All text, the band, primary fills |\n| `--rule` | `#D8D8D8` | Hairlines, table rules |\n| `--muted` | `#6B6B6B` | Labels, secondary data, captions |\n| `--signal` | `#C8102E` | Identification, one point of emphasis, interaction |\n\nSignal red is never a data series. On an interactive surface it means clickable and nothing\nelse; on a static one it means emphasis and nothing else. Never both on the same surface.\n\n**Grid.** 12 columns, 24px gutter, 8px base unit. Spacing 8/16/24/32/48/64/96. Nothing off\nthe scale.\n\n**Imagery.** None permitted. Type, rule and data carry the visual load.\n\n**Ornament.** None. Rules are structural, never decorative.\n\n## The invariant element\nA solid ink band, four base units deep, full measure, title reversed at 100% white. It\nappears on every artefact. On a 1:1 format it drops to three units. This is the mark.\n\n## Archetypes\nIndexed by the job they do. `When` is the trigger; `Why` is what it buys.\n\n| Job | Move | When |\n| --- | --- | --- |\n| Evidence | **Datum** | One figure reframes the section |\n| Evidence | **Plate** | A figure needs a number and caption to be cited later |\n| Evidence | **Register** | Three or four figures state the position together |\n| Structure | **Key** | A legend must be understood before the data |\n| Structure | **Matrix** | Two variables must be crossed |\n| Narrative | **Band statement** | A section must be declared, not introduced |\n| Change | **Series** | The same measure across periods |\n| Transaction | **Schedule** | Scope, cost or duration must be stated exactly |\n| Wayfinding | **Running index** | Past page two of a long document |\n\nThe set is open. A valid addition makes a specific class of data more legible.\n\nFull rationales, data treatment and the conflict register are in `REFERENCE.md`.\n\n---\n\n## Floors \u2014 never varied \u2014 restated\nBody contrast 4.5:1, display 3:1. Colour never the only signal. Focus always visible.\nMeasure ceiling 66ch. Open-licence type only.\n", "compact": "# Instrument\n\nA Standards pack, from Applied Form. Technical modernism. The page is an instrument: every mark earns its place by carrying\ninformation.\n\n> **Compact build.** Clustered by category with precedence made explicit, for\n> small and fast models. On a frontier model use `SKILL.md` instead \u2014 the extra\n> structure costs tokens and returns nothing there.\n\n## 0 \u00b7 Floors \u2014 never varied \u2014 these override everything below\nBody contrast 4.5:1, display 3:1. Colour never the only signal. Focus always visible.\nMeasure ceiling 66ch. Open-licence type only.\n\n## 1 \u00b7 Before producing anything, answer these four\n1. **Which artefact?** Report page \u00b7 essay opening \u00b7 deck spread \u00b7 product screen \u00b7 poster \u00b7 chart-and-table.\n2. **Which archetype?** Pick from the table below by the job it does, not by how it looks.\n3. **Is this a load-bearing surface?** If yes, nothing changes. Instrument has no signature\n   device to suspend, which is why it needs no second register.\n4. **What is the one loud element?** One per eight. If you cannot name it, there isn't one.\n\n## 2 \u00b7 Archetypes\nIndexed by the job they do. `When` is the trigger; `Why` is what it buys.\n\n| Job | Move | When | Why |\n|---|---|---|---|\n| Evidence | **Datum** | One figure reframes the section | Scale in mono reads as a measurement, not a boast |\n| Evidence | **Plate** | A figure needs a number and caption to be cited later | Makes the evidence quotable |\n| Evidence | **Register** | Three or four figures state the position together | Read in one sweep on a shared baseline |\n| Structure | **Key** | A legend must be understood before the data | Says the data is worth decoding |\n| Structure | **Matrix** | Two variables must be crossed | The grid is the argument |\n| Narrative | **Band statement** | A section must be declared, not introduced | The invariant doing rhetorical work |\n| Change | **Series** | The same measure across periods | Change reads as shape before number |\n| Transaction | **Schedule** | Scope, cost or duration must be stated exactly | Precision is the persuasion |\n| Wayfinding | **Running index** | Past page two of a long document | Position is information |\n\nThe set is open. A valid addition makes a specific class of data more legible.\n\n## 3 \u00b7 The invariant element\nA solid ink band, four base units deep, full measure, title reversed at 100% white. It\nappears on every artefact. On a 1:1 format it drops to three units. This is the mark.\n\n## 4 \u00b7 Materials\n**Type.** Public Sans for everything textual, 400/600/800, sentence case. DM Mono for every\nnumeral, unit, identifier, column header and label \u2014 no exceptions, and never for running\nprose. Measure never exceeds 66 characters.\n\n**Colour.** Only these five.\n\n| Token | Value | Role |\n|---|---|---|\n| `--ground` | `#FFFFFF` | The only ground |\n| `--ink` | `#111111` | All text, the band, primary fills |\n| `--rule` | `#D8D8D8` | Hairlines, table rules |\n| `--muted` | `#6B6B6B` | Labels, secondary data, captions |\n| `--signal` | `#C8102E` | Identification, one point of emphasis, interaction |\n\nSignal red is never a data series. On an interactive surface it means clickable and nothing\nelse; on a static one it means emphasis and nothing else. Never both on the same surface.\n\n**Grid.** 12 columns, 24px gutter, 8px base unit. Spacing 8/16/24/32/48/64/96. Nothing off\nthe scale.\n\n**Imagery.** None permitted. Type, rule and data carry the visual load.\n\n**Ornament.** None. Rules are structural, never decorative.\n\n## 5 \u00b7 State encoding\nGlyph, word and position together, so everything reads identically in one colour.\n\n`\u25b2 Approved` \u00b7 `\u25a0 In review` \u00b7 `\u25cf Blocked` \u00b7 `\u25a1 Queued`\n\nTint is optional and never load-bearing.\n\n## 6 \u00b7 Prohibitions\nNo serif. No colour beyond the five. No decorative imagery. No centred text except in the\nband. No border radius. No shadow. No gradient. No italic. Nothing off the 8px scale.\n\n## 7 \u00b7 Conflict register\nWhen two rules collide, this decides. Where it is silent, the higher-level rule wins.\n\n| Collision | Resolution |\n|---|---|\n| Density vs measure ceiling | Measure wins. Add columns, never lengthen the line |\n| Signal vs contrast floor | Floor wins. Red never carries small text on white |\n| Band vs format | On 1:1 the band is three units |\n| Datum scale vs display contrast | Contrast wins. Reduce size before reducing contrast |\n\n## 8 \u00b7 Data treatment\nDM Mono, tabular figures, right-aligned. Units always stated. Table headers tracked\nuppercase in muted, with a 1.5px ink rule beneath. Series order: ink, muted, signal.\n\n---\n\n## 9 \u00b7 Before finalising\nVerify every numbered section above is satisfied. Where two rules collide, the\nconflict register decides; where it is silent, the lower-numbered section wins.\n\n### Floors \u2014 never varied \u2014 restated\nBody contrast 4.5:1, display 3:1. Colour never the only signal. Focus always visible.\nMeasure ceiling 66ch. Open-licence type only.\n"};
+
+const MODELS={
+  "claude-sonnet-4-6":{label:"Sonnet · frontier", tier:"frontier"},
+  "claude-haiku-4-5":{label:"Haiku · small and fast", tier:"small"}
+};
+let MODEL="claude-haiku-4-5";
+
+const PAYLOADS={
+  instrument:{label:"Instrument · technical modernism", note:"Low collision rate. No fork, low variation budget, few genuine rule conflicts.", A:SCHEMA_A, B:SCHEMA_B},
+  contra:{label:"Contra · expressive postmodern", note:"High collision rate. A deviation budget that only means anything against a stable base, and six live conflicts.", A:CONTRA_A, B:CONTRA_B},
+  builds:{label:"Shipped builds · frontier vs compact",
+    note:"The real product question, not a schema abstraction. A is the frontier build (flat, core only, 20 constraints). B is the compact build (clustered, precedence explicit, numbered, verification line). The literature predicts compact wins on a small model and ties or loses on a frontier one — run it on both and see.",
+    A:BUILDS.frontier, B:BUILDS.compact}
+};
+let PAYLOAD="builds";
+
+/* ---------- storage: artifact API, localStorage, or memory ---------- */
+const mem={};
+const store={
+  async get(k){ try{ if(window.storage){const r=await window.storage.get(k);return r?r.value:null;}
+      return localStorage.getItem(k);}catch(e){return mem[k]??null;} },
+  async set(k,v){ try{ if(window.storage){await window.storage.set(k,v);return;}
+      localStorage.setItem(k,v);}catch(e){mem[k]=v;} },
+  async del(k){ try{ if(window.storage){await window.storage.delete(k);return;}
+      localStorage.removeItem(k);}catch(e){delete mem[k];} }
+};
+const KEY=()=>`schema-study:v1:${PAYLOAD}:${MODEL}`;
+
+const $=id=>document.getElementById(id);
+let S={i:0,phase:"idle",trials:[]};   // i = brief index
+let gen={};                            // current brief's four artefacts
+let map={};
+let CACHE={};                          // briefId -> {a1,a2,b1,b2}
+let stopFlag=false;
+const AKEY=id=>`schema-study:art:${PAYLOAD}:${MODEL}:${id}`;
+
+
+
+function setStatus(t,c){ $("statusText").textContent=t; $("dot").className="dot"+(c?" "+c:""); }
+
+function drawProgress(){
+  $("prog").innerHTML=BRIEFS.map((b,i)=>{
+    const done=S.trials.some(t=>t.brief===b.id);
+    return `<i class="${done?"done":(i===S.i&&S.phase!=="idle"?"now":"")}" title="${b.label}"></i>`;}).join("");
+  $("progLabel").textContent = S.phase==="idle" ? (S.trials.length?"Paused":"Not started")
+    : `Brief ${S.i+1} of ${BRIEFS.length} · ${BRIEFS[S.i].label}`;
+  $("progCount").textContent = `${S.trials.length} of ${BRIEFS.length} briefs judged`;
+}
+
+/* ---------- generation ---------- */
+async function generate(schema,brief){
+  const key=($("apikey").value||"").trim();
+  const headers={"Content-Type":"application/json"};
+  if(key){headers["x-api-key"]=key;headers["anthropic-version"]="2023-06-01";
+          headers["anthropic-dangerous-direct-browser-access"]="true";}
+  const prompt=`You are producing a design artefact governed by the system below. Follow it exactly. Where the system constrains something, obey the constraint rather than your own preference.
+
+SYSTEM
+${schema}
+
+BRIEF
+${brief}
+
+Return a single self-contained HTML fragment: one <style> block followed by markup. No explanation, no markdown fences, no <html> or <body> tags. Invent plausible content for the subject.
+
+Constraints on the markup:
+- It must be COMPLETE. Every tag closed. Prefer fewer elements over a fragment that runs long and gets cut off.
+- Flow layout only. No position:absolute, no fixed heights, no 100vh.
+- Keep total output under about 2000 tokens.`;
+  const body=JSON.stringify({model:MODEL,max_tokens:4000,
+      messages:[{role:"user",content:prompt}]});
+  let res, wait=5000;
+  for(let attempt=0; attempt<6; attempt++){
+    res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers,body});
+    if(res.ok) break;
+    if(res.status===429 || res.status>=500){
+      const ra=parseInt(res.headers.get("retry-after")||"0",10);
+      const pause=(ra?ra*1000:wait);
+      const why = res.status===429 ? "Rate limited" : `Server error ${res.status}`;
+      setStatus(`${why} — waiting ${Math.round(pause/1000)}s, then retrying (${attempt+1}/6)…`,"run");
+      await sleep(pause); wait=Math.min(wait*2,60000); continue;
+    }
+    const d=await res.text().catch(()=>"");
+    throw new Error(`API ${res.status}. ${res.status===401||res.status===403
+      ?"No valid key — paste one above, or run this as a Claude artifact.":d.slice(0,160)}`);
+  }
+  if(!res.ok) throw new Error(`Gave up after six attempts (last: ${res.status}). Wait a few minutes and press Generate all again — finished briefs are saved.`);
+  const data=await res.json();
+  const text=(data.content||[]).filter(i=>i.type==="text").map(i=>i.text).join("\n");
+  const out=text.replace(/```html/g,"").replace(/```/g,"").trim();
+  const o=(out.match(/<(div|section|table|tbody|ul|main|article)\b/g)||[]).length;
+  const c=(out.match(/<\/(div|section|table|tbody|ul|main|article)>/g)||[]).length;
+  if(data.stop_reason==="max_tokens"||o-c>1)
+    return {html:`<div style="padding:14px;font:14px/1.5 system-ui;border-left:3px solid #A33625">
+      <b>Truncated — not comparable.</b> Re-run this brief.</div>`+out, ok:false};
+  return {html:out, ok:true};
+}
+
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const GAP=2500;   // pause between calls; the API is happier and the study still finishes
+
+function fit(id){const f=$(id);try{const d=f.contentDocument;if(!d||!d.body)return;
+  const h=Math.max(d.body.scrollHeight,d.documentElement.scrollHeight);
+  if(h>40)f.style.height=(h+20)+"px";}catch(e){}}
+function put(id,html){const f=$(id);
+  f.onload=()=>{fit(id);setTimeout(()=>fit(id),250);};
+  f.srcdoc=`<style>html,body{margin:0;font-family:system-ui,sans-serif}</style>${html}`;}
+
+/* ---------- flow ---------- */
+async function runBrief(){
+  const b=BRIEFS[S.i];
+  $("stageTitle").textContent=`Brief ${S.i+1} · ${b.label}`;
+  $("stageHint").textContent=b.text;
+  $("qual").classList.add("hidden"); $("drift").classList.add("hidden");
+  $("skip").classList.remove("hidden");
+  drawProgress();
+  try{
+    if(!CACHE[b.id]){
+      setStatus("This brief has not been generated yet. Run phase 1 first.","err");
+      $("stageHint").textContent="Nothing cached for this brief. Go to phase 1 and press Generate all.";
+      return;
+    }
+    gen=CACHE[b.id];
+    const {a1,a2,b1,b2}=gen;
+    if(![a1,a2,b1,b2].every(x=>x.ok)) setStatus("One or more responses were truncated — judge with care, or skip.","err");
+    else setStatus("Question 1 of 2.","ok");
+    // Q1: first run of each, randomised
+    map.q1 = Math.random()<0.5 ? {left:"A",right:"B"} : {left:"B",right:"A"};
+    put("fL", map.q1.left==="A"?a1.html:b1.html);
+    put("fR", map.q1.right==="A"?a1.html:b1.html);
+    $("revL").textContent="hidden"; $("revR").textContent="hidden";
+    $("qual").classList.remove("hidden");
+    S.phase="q1";
+  }catch(e){ setStatus(e.message,"err"); console.error(e); }
+}
+
+document.querySelectorAll("[data-q1]").forEach(btn=>btn.addEventListener("click",()=>{
+  const v=btn.dataset.q1;
+  const winner = v==="none" ? "none" : map.q1[v];
+  S._q1=winner;
+  // Q1 identities stay hidden until Q2 is recorded. Q2 re-renders the same two
+  // artefacts, so labelling them here would unblind the consistency vote - which
+  // is the only measure the verdict reads.
+  // Q2: drift pairs, randomised
+  map.q2 = Math.random()<0.5 ? {X:"A",Y:"B"} : {X:"B",Y:"A"};
+  put("fX1", map.q2.X==="A"?gen.a1.html:gen.b1.html);
+  put("fX2", map.q2.X==="A"?gen.a2.html:gen.b2.html);
+  put("fY1", map.q2.Y==="A"?gen.a1.html:gen.b1.html);
+  put("fY2", map.q2.Y==="A"?gen.a2.html:gen.b2.html);
+  $("revX").textContent="hidden"; $("revY").textContent="hidden";
+  $("drift").classList.remove("hidden");
+  $("drift").scrollIntoView({behavior:"smooth",block:"start"});
+  setStatus("Question 2 of 2 — consistency.","ok");
+  S.phase="q2";
+}));
+
+document.querySelectorAll("[data-q2]").forEach(btn=>btn.addEventListener("click",async()=>{
+  const v=btn.dataset.q2;
+  const winner = v==="none" ? "none" : map.q2[v];
+  // both reveals happen here, after the consistency vote is in
+  $("revL").textContent = map.q1.left==="A"?"Variant A · flat":"Variant B · layered";
+  $("revR").textContent = map.q1.right==="A"?"Variant A · flat":"Variant B · layered";
+  $("revX").textContent = map.q2.X==="A"?"Variant A · flat":"Variant B · layered";
+  $("revY").textContent = map.q2.Y==="A"?"Variant A · flat":"Variant B · layered";
+  S.trials.push({brief:BRIEFS[S.i].id,label:BRIEFS[S.i].label,quality:S._q1,consistency:winner,at:Date.now()});
+  await save(); renderTally();
+  $("qual").classList.add("hidden"); $("drift").classList.add("hidden");
+  S.i++;
+  if(S.i>=BRIEFS.length){ S.phase="idle"; S.i=0; await save(); drawProgress();
+    $("stageTitle").textContent="Study complete";
+    $("stageHint").textContent="All seven briefs judged. The verdict is below.";
+    $("skip").classList.add("hidden"); setStatus("Complete.","ok");
+    $("results").scrollIntoView({behavior:"smooth"});
+  } else { await save(); runBrief(); }
+}));
+
+function paintModel(){
+  $("modelState").textContent=`Active: ${MODELS[MODEL].label}`;
+  document.querySelectorAll("[data-model]").forEach(b=>{
+    const on=b.dataset.model===MODEL;
+    b.style.background=on?"var(--ink)":"#fff"; b.style.color=on?"#fff":"var(--ink)";});
+}
+document.querySelectorAll("[data-model]").forEach(b=>b.addEventListener("click",async()=>{
+  MODEL=b.dataset.model; CACHE={}; S={i:0,phase:"idle",trials:[]};
+  paintModel(); await load(); await loadArts();
+  drawProgress(); drawGenProgress(); renderTally();
+  $("qual").classList.add("hidden"); $("drift").classList.add("hidden");
+  setStatus(`Target set to ${MODELS[MODEL].label}.`,"ok");
+}));
+
+function paintPayload(){
+  const p=PAYLOADS[PAYLOAD];
+  $("payloadNote").textContent=`${p.label}. ${p.note} Results and generated artefacts are stored separately per payload, so switching does not overwrite an earlier round.`;
+  $("payloadState").textContent=`Active: ${p.label}`;
+  document.querySelectorAll("[data-payload]").forEach(b=>{
+    const on=b.dataset.payload===PAYLOAD;
+    b.style.background=on?"var(--ink)":"#fff"; b.style.color=on?"#fff":"var(--ink)";});
+  $("schemaA").value=p.A; $("schemaB").value=p.B;
+}
+document.querySelectorAll("[data-payload]").forEach(b=>b.addEventListener("click",async()=>{
+  PAYLOAD=b.dataset.payload; CACHE={}; S={i:0,phase:"idle",trials:[]};
+  paintPayload(); await load(); await loadArts();
+  drawProgress(); drawGenProgress(); renderTally();
+  $("qual").classList.add("hidden"); $("drift").classList.add("hidden");
+  setStatus(`Switched to ${PAYLOADS[PAYLOAD].label}.`,"ok");
+}));
+
+$("genAll").addEventListener("click",generateAll);
+$("genStop").addEventListener("click",()=>{stopFlag=true;setStatus("Stopping after this artefact…","run");});
+$("toReview").addEventListener("click",()=>{S.i=0;S.phase="run";runBrief();
+  $("stage").scrollIntoView({behavior:"smooth"});});
+$("wipeGen").addEventListener("click",async()=>{
+  for(const b of BRIEFS) await store.del(AKEY(b.id));
+  CACHE={}; drawGenProgress(); setStatus("Generated artefacts cleared.","ok");});
+
+$("start").addEventListener("click",()=>{S.i=0;S.trials=[];S.phase="run";runBrief();});
+$("resume").addEventListener("click",()=>{S.phase="run";runBrief();});
+$("skip").addEventListener("click",async()=>{S.i++;if(S.i>=BRIEFS.length){S.i=0;S.phase="idle";
+  await save();drawProgress();setStatus("Reached the end.","ok");
+  $("qual").classList.add("hidden");$("drift").classList.add("hidden");}else{await save();runBrief();}});
+
+async function saveArt(id){ await store.set(AKEY(id), JSON.stringify(CACHE[id])); }
+async function loadArts(){
+  for(const b of BRIEFS){
+    const r=await store.get(AKEY(b.id));
+    if(r){ try{ CACHE[b.id]=JSON.parse(r); }catch(e){} }
+  }
+}
+function generatedCount(){ return BRIEFS.filter(b=>CACHE[b.id]).length; }
+// the first ungenerated brief, which is not the same as the count when an
+// earlier brief failed and a later one succeeded
+function firstGap(){ const i=BRIEFS.findIndex(b=>!CACHE[b.id]); return i<0?BRIEFS.length:i; }
+
+function drawGenProgress(){
+  $("genProg").innerHTML=BRIEFS.map(b=>`<i class="${CACHE[b.id]?"done":""}" title="${b.label}"></i>`).join("");
+  const n=generatedCount();
+  $("genCount").textContent=`${n} of ${BRIEFS.length} briefs generated · ${n*4} of 28 artefacts`;
+  $("toReview").disabled = n===0;
+  if(n===BRIEFS.length) $("genLabel").textContent="All generated — ready to review";
+  else if(n===0) $("genLabel").textContent="Nothing generated yet";
+  else $("genLabel").textContent=`Partial — press Generate all to continue from brief ${firstGap()+1}`;
+}
+
+async function generateAll(){
+  stopFlag=false;
+  $("genAll").disabled=true; $("genStop").classList.remove("hidden");
+  const A=$("schemaA").value, B=$("schemaB").value;
+  let failures=0;
+  try{
+    for(let i=0;i<BRIEFS.length;i++){
+      const b=BRIEFS[i];
+      if(CACHE[b.id]) continue;                       // resume: skip what exists
+      const plan=[["a1",A],["a2",A],["b1",B],["b2",B]];
+      const out={}; let failed=false;
+      for(let n=0;n<plan.length;n++){
+        if(stopFlag){ setStatus("Stopped. Press Generate all to resume.","ok"); return; }
+        const [slot,schema]=plan[n];
+        $("genLabel").textContent=`Brief ${i+1} of ${BRIEFS.length} · ${b.label} · artefact ${n+1} of 4`;
+        setStatus(`Generating — brief ${i+1}/${BRIEFS.length}, artefact ${n+1}/4`,"run");
+        try{
+          out[slot]=await generate(schema,b.text);
+        }catch(err){
+          // one artefact failed for good — leave the brief incomplete rather than
+          // caching a half-set that would look judgeable
+          setStatus(`${err.message} Skipping ${b.label} for now.`,"err");
+          failed=true; break;
+        }
+        if(!(i===BRIEFS.length-1 && n===plan.length-1)) await sleep(GAP);
+      }
+      if(failed){ failures++; await sleep(GAP*2); continue; }
+      CACHE[b.id]=out; await saveArt(b.id); drawGenProgress();
+    }
+    const done=generatedCount();
+    if(failures===0 && done===BRIEFS.length){
+      setStatus("All twenty-eight generated. Review has no waiting in it.","ok");
+      $("genLabel").textContent="All generated — ready to review";
+    }else{
+      setStatus(`${done*4} of 28 artefacts generated; ${BRIEFS.length-done} brief`
+        +`${BRIEFS.length-done===1?"":"s"} still missing. Press Generate all to retry.`,"err");
+    }
+  }catch(e){
+    setStatus(e.message,"err");
+    $("genLabel").textContent=`Stopped at brief ${firstGap()+1}. Finished briefs are saved — press Generate all to resume.`;
+  }finally{
+    $("genAll").disabled=false; $("genStop").classList.add("hidden"); drawGenProgress();
+  }
+}
+
+async function save(){ await store.set(KEY(),JSON.stringify({i:S.i,trials:S.trials})); }
+async function load(){ const r=await store.get(KEY()); if(!r) return;
+  let d; try{ d=JSON.parse(r); }catch(e){ console.error("discarding corrupt saved state",e); return; }
+  S.trials=d.trials||[]; S.i=Math.min(d.i||0,BRIEFS.length-1); }
+
+/* ---------- results ---------- */
+function renderTally(){
+  const t=S.trials;
+  if(!t.length){ $("tally").innerHTML='<p class="hint">No briefs judged yet.</p>'; return; }
+  const c=(f,k)=>t.filter(x=>x[f]===k).length;
+  const rows=t.map(x=>`<tr><td>${x.label}</td>
+    <td>${x.quality==="none"?"—":"Variant "+x.quality}</td>
+    <td>${x.consistency==="none"?"—":"Variant "+x.consistency}</td></tr>`).join("");
+  const qa=c("quality","A"),qb=c("quality","B"),ca=c("consistency","A"),cb=c("consistency","B");
+  let verdict, note;
+  const isBuilds = PAYLOAD==="builds", small = MODELS[MODEL].tier==="small";
+  if(isBuilds && t.length>=4){
+    if(cb>ca && cb-ca>=2){
+      verdict = small ? "Compact build earns its keep on a small model."
+                      : "Compact build wins even on a frontier model.";
+      note = small ? "This is the predicted result and it is now evidence rather than inference. Ship the compact build as the default for small and fast models, and say so in the pack README."
+                   : "Unexpected. If it holds, the compact build should be the default everywhere and the frontier build is the one to retire.";
+    } else if(ca>cb && ca-cb>=2){
+      verdict = small ? "Compact build is not earning its keep."
+                      : "Frontier build wins, as predicted.";
+      note = small ? "The strongest claim in the product does not hold for these systems. Either the compact structure needs rework, or the two-build split should be dropped in favour of the simpler one."
+                   : "Consistent with the literature: strong models reconstruct the structure themselves. Nothing to change.";
+    } else {
+      verdict="No clear difference.";
+      note = small ? "On this evidence the two-build split is not paying for itself on a small model. Worth more trials before acting — but if it holds, ship one build."
+                   : "Expected on a frontier model. The interesting run is the small one.";
+    }
+  }
+  else if(t.length<4){ verdict="Too early to say."; note=`${t.length} brief${t.length===1?"":"s"} judged. Below about four this is within the range of run-to-run noise. Finish the set.`; }
+  else if(cb>ca && cb-ca>=2){ verdict="Precedence is doing real work."; note="The layered variant is more self-consistent across repeat runs, which is exactly the failure precedence is meant to fix. Schema v0.3 stands."; }
+  else if(ca>cb && ca-cb>=2){ verdict="Precedence is not earning its complexity."; note="The flat variant held together at least as well. Consider simplifying the schema — that would be the more valuable finding, and it is cheaper to act on now than later."; }
+  else { verdict="No clear difference."; note="Consistency is level between the two structures. On that evidence the simpler structure wins, since it costs less to author and maintain."; }
+  $("tally").innerHTML=`
+    <p class="label" style="margin-bottom:8px">Payload: ${PAYLOADS[PAYLOAD].label}</p>
+    <table><thead><tr><th>Brief</th><th>Stronger</th><th>More consistent</th></tr></thead><tbody>${rows}</tbody></table>
+    <table style="max-width:560px;margin-top:calc(var(--u)*3)">
+      <thead><tr><th>Measure</th><th>A · flat</th><th>B · layered</th><th>Tie</th></tr></thead>
+      <tbody>
+        <tr><td>Stronger artefact</td><td class="n">${qa}</td><td class="n">${qb}</td><td class="n">${c("quality","none")}</td></tr>
+        <tr><td>More consistent</td><td class="n">${ca}</td><td class="n">${cb}</td><td class="n">${c("consistency","none")}</td></tr>
+      </tbody></table>
+    <div class="verdict"><div class="big">${verdict}</div><div>${note}</div></div>`;
+}
+
+$("export").addEventListener("click",()=>{
+  const t=S.trials; if(!t.length) return;
+  const md=["# Schema study results","",`Trials: ${t.length}`,"",
+    "| Brief | Stronger | More consistent |","|---|---|---|",
+    ...t.map(x=>`| ${x.label} | ${x.quality==="none"?"—":"Variant "+x.quality} | ${x.consistency==="none"?"—":"Variant "+x.consistency} |`)
+  ].join("\n");
+  const blob=new Blob([md],{type:"text/markdown"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download="schema-study-results.md"; a.click();
+});
+
+$("clear").addEventListener("click",async()=>{ await store.del(KEY()); S={i:0,phase:"idle",trials:[]};
+  renderTally(); drawProgress(); setStatus("Cleared.","ok");
+  $("qual").classList.add("hidden"); $("drift").classList.add("hidden"); });
+
+(async()=>{ paintModel(); paintPayload(); await load(); await loadArts(); drawProgress(); drawGenProgress(); renderTally();
+  if(S.trials.length && S.trials.length<BRIEFS.length){ $("resume").classList.remove("hidden");
+    $("start").textContent="Start over"; setStatus(`Resuming at brief ${S.i+1}.`,"ok"); } })();
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+# Schema licence
+
+`schema/schema-v0.3.md` and `schema/schema-v0.4.md` are licensed under the Creative Commons
+Attribution 4.0 International Licence (CC BY 4.0).
+
+Full text: https://creativecommons.org/licenses/by/4.0/legalcode
+
+You may share and adapt the schema, including commercially, provided you give appropriate
+credit, link to the licence, and indicate if changes were made.
+
+Attribute as: *System schema, from Standards by Applied Form —
+https://github.com/jordanberkowitz-afk/standards*
+
+This licence covers the schema documents only. It does not cover the six systems authored
+against the schema; see `LICENSE`.

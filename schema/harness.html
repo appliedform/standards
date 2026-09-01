@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Schema test harness</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --white:#FFFFFF; --ink:#2B2420; --muted:#6E6153; --rule:#E4DED4;
+    --terra-deep:#8A3F20; --terracotta:#B0542E; --sand:#F1E7D5; --paper:#FAF4EA;
+    --positive:#4C7A6E; --caution:#C58A1E; --critical:#A33625; --focus:#FFDD00;
+    --u:8px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--white); color:var(--ink);
+    font-family:"Libre Franklin",system-ui,sans-serif; font-size:19px; line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+  .label{
+    font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:12px; font-weight:500;
+    letter-spacing:.1em; text-transform:uppercase; color:var(--muted);
+  }
+  a{color:var(--terra-deep); text-decoration:underline}
+  :focus-visible{outline:3px solid var(--focus); outline-offset:2px; box-shadow:0 0 0 5px var(--ink)}
+
+  header{border-bottom:2px solid var(--ink); padding:calc(var(--u)*4) calc(var(--u)*4) calc(var(--u)*3)}
+  header h1{font-size:26px; font-weight:700; margin:var(--u) 0 0; letter-spacing:-.01em}
+  header p{max-width:66ch; color:var(--muted); font-size:17px; margin:var(--u) 0 0}
+
+  main{padding:calc(var(--u)*4); max-width:1600px}
+  section{margin-bottom:calc(var(--u)*6)}
+  h2{font-size:20px; font-weight:700; margin:0 0 var(--u); padding-bottom:var(--u); border-bottom:1px solid var(--rule)}
+  .hint{color:var(--muted); font-size:16px; max-width:66ch; margin:0 0 calc(var(--u)*2)}
+
+  .cols{display:grid; grid-template-columns:1fr 1fr; gap:calc(var(--u)*4)}
+  @media (max-width:900px){ .cols{grid-template-columns:1fr} }
+
+  textarea{
+    width:100%; min-height:340px; padding:calc(var(--u)*2);
+    border:1px solid var(--rule); border-radius:0; background:var(--white); color:var(--ink);
+    font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:13px; line-height:1.55; resize:vertical;
+  }
+  select{
+    font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:14px; padding:var(--u) calc(var(--u)*1.5);
+    border:1px solid var(--rule); background:var(--white); color:var(--ink); border-radius:0; min-width:340px;
+  }
+  button{
+    font-family:"Libre Franklin",sans-serif; font-size:16px; font-weight:600;
+    padding:calc(var(--u)*1.5) calc(var(--u)*3); border:1px solid var(--ink);
+    background:var(--ink); color:var(--white); border-radius:0; cursor:pointer;
+  }
+  button.secondary{background:var(--white); color:var(--ink)}
+  button:disabled{opacity:.4; cursor:not-allowed}
+  .controls{display:flex; gap:calc(var(--u)*2); align-items:center; flex-wrap:wrap; margin-top:calc(var(--u)*2)}
+
+  .panel{border:1px solid var(--rule)}
+  .panel-head{
+    display:flex; justify-content:space-between; align-items:center; gap:var(--u);
+    padding:calc(var(--u)*1.5) calc(var(--u)*2); border-bottom:1px solid var(--rule); background:var(--paper);
+  }
+  .panel-head .id{font-family:"IBM Plex Mono",monospace; font-size:13px; font-weight:600}
+  iframe{width:100%; height:520px; border:0; background:var(--white); display:block}
+  pre.code{
+    margin:0; padding:calc(var(--u)*2); max-height:520px; overflow:auto; background:var(--paper);
+    font-family:"IBM Plex Mono",monospace; font-size:12px; line-height:1.5; white-space:pre-wrap; word-break:break-word;
+  }
+  .hidden{display:none}
+
+  .verdict{display:flex; gap:calc(var(--u)*2); flex-wrap:wrap; align-items:center; margin-top:calc(var(--u)*3)}
+  .status{
+    font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--muted);
+    display:flex; align-items:center; gap:var(--u);
+  }
+  .dot{width:9px; height:9px; border-radius:50%; background:var(--muted); display:inline-block}
+  .dot.run{background:var(--caution)} .dot.ok{background:var(--positive)} .dot.err{background:var(--critical)}
+
+  table{border-collapse:collapse; width:100%; max-width:720px; font-size:16px}
+  th,td{text-align:left; padding:var(--u) calc(var(--u)*1.5); border-bottom:1px solid var(--rule)}
+  th{font-family:"IBM Plex Mono",monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:500}
+  td.num{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums}
+  .empty{color:var(--muted); font-size:16px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="label">Applied Form · design system programme</div>
+  <h1>Schema test harness</h1>
+  <p>Runs two structural variants of the same system content against one fixed brief, renders both blind, and keeps a tally of which structure produces stronger output. Built to settle whether precedence changes what the model does, or only how the document reads.</p>
+</header>
+
+<main>
+
+  <section>
+    <h2>1 · The two variants</h2>
+    <p class="hint">Substance is identical in both. Only the structure differs: A is a flat enumerated list, B is layered with explicit precedence and a conflict register. Edit either freely, but keep the content matched or the test measures nothing.</p>
+    <div class="cols">
+      <div>
+        <div class="label" style="margin-bottom:8px">Variant A · flat</div>
+        <textarea id="schemaA" spellcheck="false"></textarea>
+      </div>
+      <div>
+        <div class="label" style="margin-bottom:8px">Variant B · layered, precedence-ordered</div>
+        <textarea id="schemaB" spellcheck="false"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>2 · The brief</h2>
+    <p class="hint">One fixed suite, held constant across every run and every system. A system that cannot do all six is not finished.</p>
+    <select id="brief" aria-label="Test brief"></select>
+    <div class="controls" style="margin-bottom:8px">
+      <label class="label" for="apikey" style="display:block;margin-bottom:6px">
+        Anthropic API key — needed only when running this file locally</label>
+      <input id="apikey" type="password" autocomplete="off" spellcheck="false"
+        placeholder="sk-ant-..." style="flex:1;min-width:320px;padding:10px 12px;
+        border:1px solid var(--rule);border-radius:0;font-family:'IBM Plex Mono',monospace;font-size:13px">
+      <span class="status">Held in this tab only. Never stored, never sent anywhere but the API.</span>
+    </div>
+    <div class="controls">
+      <button id="run">Run both</button>
+      <button id="manual" class="secondary">Manual mode</button>
+      <button id="reveal" class="secondary" disabled>Reveal which is which</button>
+      <button id="toggleCode" class="secondary">Show markup</button>
+      <span class="status"><span class="dot" id="dot"></span><span id="status">Ready</span></span>
+    </div>
+  </section>
+
+  <section>
+    <h2>3 · Blind comparison</h2>
+    <div class="cols">
+      <div class="panel">
+        <div class="panel-head"><span class="id" id="idLeft">LEFT</span><span class="label" id="revLeft">hidden</span></div>
+        <iframe id="frameLeft" title="Left output" sandbox="allow-same-origin"></iframe>
+        <pre class="code hidden" id="codeLeft"></pre>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="id" id="idRight">RIGHT</span><span class="label" id="revRight">hidden</span></div>
+        <iframe id="frameRight" title="Right output" sandbox="allow-same-origin"></iframe>
+        <pre class="code hidden" id="codeRight"></pre>
+      </div>
+    </div>
+    <div class="verdict">
+      <span class="label">Which is stronger?</span>
+      <button class="secondary" data-vote="left" disabled>Left</button>
+      <button class="secondary" data-vote="right" disabled>Right</button>
+      <button class="secondary" data-vote="none" disabled>No real difference</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>4 · Tally</h2>
+    <p class="hint">Persisted across sessions. If the two structures come out level after a dozen trials across different briefs, the simpler one wins and v0.2 is more complex than it needs to be.</p>
+    <div id="tally"></div>
+    <div class="controls">
+      <button id="clear" class="secondary">Clear tally</button>
+    </div>
+  </section>
+
+</main>
+
+<script>
+const BRIEFS = [
+  {id:"report", label:"Report page · data-heavy, table and figures",
+   text:"A single page from a technical report: page header, a short standfirst, one data table of six rows, and two supporting figures expressed as labelled numbers. Content subject: launch vehicle reliability by year."},
+  {id:"essay", label:"Essay opening · long-form, type-led",
+   text:"The opening of a long-form essay: title, deck, byline, and the first three paragraphs of body text. Content subject: why public institutions adopted design systems in the 1970s."},
+  {id:"spread", label:"Deck spread · single argument at scale",
+   text:"One slide spread carrying a single argument at display scale, with a supporting subhead and one attributed figure. Content subject: a claim about standardisation reducing cost."},
+  {id:"ui", label:"Product screen · load-bearing UI",
+   text:"A product UI screen: masthead, a list of six records with status, one primary action, and a detail panel. Content subject: a document processing queue."},
+  {id:"poster", label:"Poster · one-page statement",
+   text:"A single-page statement poster: one line of large type, a secondary line, and a small block of credits or metadata. Content subject: an exhibition announcement."},
+  {id:"chart", label:"Chart and table pair · data treatment",
+   text:"A chart and its accompanying table, sharing one dataset of five categories, with axis labels, legend, units and a source line."}
+];
+
+const SCHEMA_A = `TECHNICAL MODERNISM — v0.1 structure (flat)
+
+1. IDENTITY
+Name: Technical modernism. Lineage: institutional graphic programmes of the 1960s-70s.
+Refuses: decoration, photography, gradient, shadow, rounded corners.
+
+2. FIRST DECISION
+Fork on artefact: identification surfaces vs information surfaces.
+
+3. TYPE VOICES
+Permitted set: Public Sans (primary text and heading), Inter (alternate text), DM Mono (data).
+Weights 400-700. Sentence case. Measure 66ch maximum.
+
+4. PALETTE
+White #FFFFFF ground. Ink #111111. Rule #D8D8D8. Signal red #C8102E. Muted #6B6B6B.
+Signal red is for identification and single points of emphasis only, never a data series.
+
+5. SPATIAL SYSTEM
+12-column grid, 24px gutter, 8px base unit. Spacing 8/16/24/32/48/64/96.
+Permitted ratios: 1:1, 2:3, 3:2, 4:3, 16:9.
+
+6. COMPOSITIONAL ARCHETYPES
+Band: a solid ink bar carrying the title in reversed type across full measure.
+Register: labelled data blocks aligned to a shared baseline across columns.
+Datum: one figure at large size in mono, with a small label above.
+Key: a legend or index treated as a designed element.
+Plate: a bordered figure with a numbered caption.
+
+7. PROHIBITIONS
+No serif type. No colour beyond the five named. No decorative imagery. No centred text
+except in the band. No border radius. No shadow. No gradient. No italic.
+
+8. FLOORS
+Body contrast 4.5:1 minimum. Colour never alone. Focus always visible.
+
+9. DATA TREATMENT
+All numerals in DM Mono, tabular figures. Units always stated. Table headers in mono,
+tracked and uppercase. Series order: ink, muted, signal red.
+
+10. COMPILED TARGETS
+HTML, docx, pptx, chart theme.
+
+11. FAILURE MODES
+Pastiche looks like a Swiss poster tribute: oversized ranged-left sans, arbitrary red square.
+The correction is that every element must be doing informational work.`;
+
+const SCHEMA_B = `TECHNICAL MODERNISM — v0.2 structure (layered, precedence-ordered)
+
+PRECEDENCE: Layer 0 overrides all. Where two rules inside a layer collide, the conflict
+register decides. Where the register is silent, the higher layer wins.
+
+LAYER 0 — INVARIANTS (override everything below)
+Body contrast 4.5:1 minimum, display 3:1. Colour never carries meaning alone.
+Focus always visible. Measure ceiling 66ch. Open-licence type only. No asset dependency.
+
+LAYER 1 — POSITION
+Technical modernism. Lineage: institutional graphic programmes of the 1960s-70s.
+Stance: the page is an instrument. Every mark earns its place by carrying information.
+Refuses: decoration, photography, gradient, shadow, rounded corners, italic.
+Nearest neighbour: Swiss International. The tell is that this system is data-led, not poster-led.
+
+LAYER 2 — CANON
+Permitted formats: 1:1, 2:3, 3:2, 4:3, 16:9. No others.
+Artefacts: report page, essay opening, deck spread, product screen, poster, chart-and-table.
+Invariant element: a solid ink band carrying the title in reversed type, present in every artefact.
+Production constraints: must reproduce legibly at 6pt and at 3m. Screen and print both.
+
+LAYER 3 — MATERIALS
+Type: permitted set with a default. Default Public Sans (text and headings).
+Alternate Inter. Data face DM Mono, mandatory for all numerals. Weights 400-700, sentence case.
+Colour: White #FFFFFF ground, Ink #111111, Rule #D8D8D8, Muted #6B6B6B, Signal red #C8102E.
+  Signal red: identification and single-point emphasis only. Never a data series. [prohibition local to colour]
+Imagery stance: none permitted. The visual load is carried by type, rule and data.
+Ornament: none. Rules are structural, never decorative. [prohibition local to ornament]
+Mark construction: the band is 4 base units deep, full measure, ink, type reversed at 100% white.
+
+LAYER 4 — COMPOSITION
+Spatial strategy: orthogonal column grid. 12 columns, 24px gutter, 8px base unit.
+Spacing scale 8/16/24/32/48/64/96. Nothing off-scale. [prohibition local to spacing]
+Archetypes: Band, Register, Datum, Key, Plate.
+Density: high. Aim for the highest information rate the floors permit.
+Sequence: the band repeats on every page; a running index appears from page two onwards.
+
+LAYER 5 — VARIATION
+Variation budget: low. The frame is fixed so that attention goes to the data.
+Fork: none. This system does not branch.
+Deviation grammar: not applicable.
+
+LAYER 6 — COMPILATION AND CONTROL
+Data treatment: DM Mono, tabular figures, units always stated, headers tracked and uppercase.
+Series order: ink, muted, signal red.
+Targets: HTML, docx, pptx, chart theme.
+CONFLICT REGISTER
+  Density vs measure ceiling: measure wins. Add columns, never lengthen the line.
+  Signal red vs contrast floor: floor wins. Red never carries small text on white.
+  Band vs format: on 1:1 the band is 3 units, not 4.
+  Datum scale vs display contrast: contrast wins. Reduce size before reducing contrast.
+FAILURE MODES
+Pastiche looks like a Swiss poster tribute: oversized ranged-left sans, arbitrary red square.
+The correction is that every element must be doing informational work.`;
+
+const $ = id => document.getElementById(id);
+let mapping = null, outputs = {A:"", B:""}, showingCode = false;
+
+$("schemaA").value = SCHEMA_A;
+$("schemaB").value = SCHEMA_B;
+BRIEFS.forEach(b => {
+  const o = document.createElement("option");
+  o.value = b.id; o.textContent = b.label; $("brief").appendChild(o);
+});
+
+function setStatus(text, state){
+  $("status").textContent = text;
+  $("dot").className = "dot" + (state ? " " + state : "");
+}
+
+async function generate(schema, brief){
+  const prompt = `You are producing a design artefact governed by the system below. Follow it exactly. Where the system constrains something, obey the constraint rather than your own preference.
+
+SYSTEM
+${schema}
+
+BRIEF
+${brief}
+
+Return a single self-contained HTML fragment: one <style> block followed by markup. No explanation, no markdown fences, no <html> or <body> tags. Invent plausible content for the subject.
+
+Constraints on the markup:
+- It must be COMPLETE. Every tag closed. Prefer fewer elements over a fragment that runs long and gets cut off.
+- Flow layout only. No position:absolute, no fixed heights, no 100vh — the fragment is rendered in a resizing frame.
+- Keep total output under about 2500 tokens.`;
+
+  const key = (document.getElementById("apikey")?.value || "").trim();
+  const headers = {"Content-Type":"application/json"};
+  if (key) {                       // standalone: your key, this tab only
+    headers["x-api-key"] = key;
+    headers["anthropic-version"] = "2023-06-01";
+    headers["anthropic-dangerous-direct-browser-access"] = "true";
+  }
+  const payload = JSON.stringify({
+      model:"claude-sonnet-4-6", max_tokens: 4000,
+      messages:[{role:"user", content:prompt}]});
+  let res, wait = 5000;
+  for (let attempt = 0; attempt < 6; attempt++) {
+    res = await fetch("https://api.anthropic.com/v1/messages", {method:"POST", headers, body: payload});
+    if (res.ok) break;
+    if (res.status === 429 || res.status >= 500) {
+      const ra = parseInt(res.headers.get("retry-after") || "0", 10);
+      const pause = ra ? ra*1000 : wait;
+      const why = res.status === 429 ? "Rate limited" : `Server error ${res.status}`;
+      setStatus(`${why} — waiting ${Math.round(pause/1000)}s, then retrying…`, "run");
+      await new Promise(r=>setTimeout(r, pause));
+      wait = Math.min(wait*2, 60000); continue;
+    }
+    break;
+  }
+  if (!res.ok) {
+    const detail = await res.text().catch(()=> "");
+    throw new Error(`API ${res.status}. ${res.status===401||res.status===403
+      ? "No valid key — paste one above, or use manual mode."
+      : detail.slice(0,200)}`);
+  }
+  const data = await res.json();
+  const text = (data.content || [])
+    .filter(i => i.type === "text").map(i => i.text).join("\n");
+  const out = text.replace(/```html/g,"").replace(/```/g,"").trim();
+  const opens = (out.match(/<(div|section|table|tbody|ul|main|article)\b/g)||[]).length;
+  const closes = (out.match(/<\/(div|section|table|tbody|ul|main|article)>/g)||[]).length;
+  if (data.stop_reason === "max_tokens" || opens - closes > 1) {
+    return `<div style="padding:16px;font:14px/1.5 system-ui;border-left:3px solid #A33625">
+      <b>Truncated response — not comparable.</b><br>The model ran out of room before
+      closing the markup. Re-run, or shorten the schema text.</div>` + out;
+  }
+  return out;
+}
+
+function fit(id){
+  const f = $(id);
+  try {
+    const d = f.contentDocument;
+    if (!d || !d.body) return;
+    const h = Math.max(d.body.scrollHeight, d.documentElement.scrollHeight);
+    if (h > 40) f.style.height = (h + 24) + "px";
+  } catch (e) {}
+}
+
+function paint(){
+  const leftKey = mapping.left, rightKey = mapping.right;
+  const wrap = html => `<style>html,body{margin:0;font-family:system-ui,sans-serif}</style>${html}`;
+  $("frameLeft").onload = () => { fit("frameLeft"); setTimeout(()=>fit("frameLeft"), 250); };
+  $("frameRight").onload = () => { fit("frameRight"); setTimeout(()=>fit("frameRight"), 250); };
+  $("frameLeft").srcdoc = wrap(outputs[leftKey]);
+  $("frameRight").srcdoc = wrap(outputs[rightKey]);
+  $("codeLeft").textContent = outputs[leftKey];
+  $("codeRight").textContent = outputs[rightKey];
+}
+
+$("run").addEventListener("click", async () => {
+  const brief = BRIEFS.find(b => b.id === $("brief").value);
+  const a = $("schemaA").value, b = $("schemaB").value;
+  $("run").disabled = true; $("reveal").disabled = true;
+  document.querySelectorAll("[data-vote]").forEach(el => el.disabled = true);
+  $("revLeft").textContent = "hidden"; $("revRight").textContent = "hidden";
+  setStatus("Generating both variants…", "run");
+  try {
+    setStatus("Generating variant 1 of 2…","run");
+    const outA = await generate(a, brief.text);
+    await new Promise(r=>setTimeout(r,2500));
+    setStatus("Generating variant 2 of 2…","run");
+    const outB = await generate(b, brief.text);
+    outputs = {A: outA, B: outB};
+    mapping = Math.random() < 0.5 ? {left:"A", right:"B"} : {left:"B", right:"A"};
+    mapping.brief = brief.id;
+    paint();
+    setStatus("Both rendered. Judge before revealing.", "ok");
+    $("reveal").disabled = false;
+    document.querySelectorAll("[data-vote]").forEach(el => el.disabled = false);
+  } catch (err) {
+    setStatus("Generation failed. Check the connection and run again.", "err");
+    console.error(err);
+  }
+  $("run").disabled = false;
+});
+
+$("manual").addEventListener("click", () => {
+  const brief = BRIEFS.find(b => b.id === $("brief").value);
+  const wrap = (label, schema) =>
+`===== ${label} =====
+You are producing a design artefact governed by the system below. Follow it exactly.
+Where the system constrains something, obey the constraint rather than your own preference.
+
+SYSTEM
+${schema}
+
+BRIEF
+${brief.text}
+
+Return a single self-contained HTML fragment: one <style> block followed by markup.
+No explanation, no markdown fences. Invent plausible content for the subject.
+`;
+  // randomise as the blinded path does, and label the panes by position only -
+  // naming the variant here would tell the judge which is which before they vote
+  mapping = Math.random() < 0.5 ? {left:"A", right:"B", brief: brief.id, mode:"manual"}
+                                : {left:"B", right:"A", brief: brief.id, mode:"manual"};
+  const schemaOf = k => k === "A" ? $("schemaA").value : $("schemaB").value;
+  const leftPrompt  = wrap("VARIANT 1", schemaOf(mapping.left));
+  const rightPrompt = wrap("VARIANT 2", schemaOf(mapping.right));
+  const both = leftPrompt + "\n\n" + rightPrompt;
+  showingCode = true;
+  ["Left","Right"].forEach(s2 => { $("frame"+s2).classList.add("hidden");
+    $("code"+s2).classList.remove("hidden"); });
+  $("codeLeft").textContent = leftPrompt;
+  $("codeRight").textContent = rightPrompt;
+  $("toggleCode").textContent = "Show rendered";
+  navigator.clipboard?.writeText(both).catch(()=>{});
+  setStatus("Both prompts shown, and copied. Run each in a separate fresh chat.", "ok");
+  document.querySelectorAll("[data-vote]").forEach(el => el.disabled = false);
+  $("reveal").disabled = false;
+});
+
+$("reveal").addEventListener("click", () => {
+  if (!mapping) return;
+  const name = k => k === "A" ? "Variant A · flat" : "Variant B · layered";
+  $("revLeft").textContent = name(mapping.left);
+  $("revRight").textContent = name(mapping.right);
+});
+
+$("toggleCode").addEventListener("click", () => {
+  showingCode = !showingCode;
+  ["Left","Right"].forEach(s => {
+    $("frame"+s).classList.toggle("hidden", showingCode);
+    $("code"+s).classList.toggle("hidden", !showingCode);
+  });
+  $("toggleCode").textContent = showingCode ? "Show rendered" : "Show markup";
+});
+
+document.querySelectorAll("[data-vote]").forEach(btn => {
+  btn.addEventListener("click", async () => {
+    if (!mapping) return;
+    const v = btn.dataset.vote;
+    const winner = v === "none" ? "none" : mapping[v];
+    await record({brief: mapping.brief ?? $("brief").value, winner,
+                  mode: mapping.mode ?? "blind", at: Date.now()});
+    document.querySelectorAll("[data-vote]").forEach(el => el.disabled = true);
+    setStatus("Result recorded.", "ok");
+  });
+});
+
+const mem = {};
+const store = {
+  async get(k){ try{ if(window.storage){const r=await window.storage.get(k);return r?r.value:null;}
+      return localStorage.getItem(k);}catch(e){return mem[k]??null;} },
+  async set(k,v){ try{ if(window.storage){await window.storage.set(k,v);return;}
+      localStorage.setItem(k,v);}catch(e){mem[k]=v;} },
+  async del(k){ try{ if(window.storage){await window.storage.delete(k);return;}
+      localStorage.removeItem(k);}catch(e){delete mem[k];} }
+};
+
+async function loadTrials(){
+  const r = await store.get("harness:trials");
+  if (!r) return [];
+  try { return JSON.parse(r); } catch (e) { console.error("discarding corrupt trials", e); return []; }
+}
+
+async function record(trial){
+  const trials = await loadTrials();
+  trials.push(trial);
+  await store.set("harness:trials", JSON.stringify(trials));
+  renderTally(trials);
+}
+
+function renderTally(trials){
+  if (!trials.length){
+    $("tally").innerHTML = '<p class="empty">No trials recorded yet.</p>';
+    return;
+  }
+  // manual trials are judged on prompts the runner assembled by hand; keep them
+  // out of the blinded population rather than pooling the two
+  const blind = trials.filter(t => t.mode !== "manual");
+  const manual = trials.length - blind.length;
+  if (!blind.length){
+    $("tally").innerHTML = `<p class="empty">No blinded trials yet${manual?` (${manual} manual)`:""}.</p>`;
+    return;
+  }
+  const count = k => blind.filter(t => t.winner === k).length;
+  const rows = [["Variant A · flat", count("A")], ["Variant B · layered", count("B")], ["No real difference", count("none")]];
+  $("tally").innerHTML =
+    '<table><thead><tr><th>Structure</th><th>Wins</th><th>Share</th></tr></thead><tbody>' +
+    rows.map(([n,c]) => `<tr><td>${n}</td><td class="num">${c}</td><td class="num">${Math.round(c/blind.length*100)}%</td></tr>`).join("") +
+    `</tbody></table><p class="empty mono" style="margin-top:12px">${blind.length} blinded trial${blind.length===1?"":"s"} recorded`
+    + `${manual?` · ${manual} manual, excluded`:""}</p>`;
+}
+
+$("clear").addEventListener("click", async () => {
+  await store.del("harness:trials");
+  renderTally([]);
+});
+
+loadTrials().then(renderTally);
+</script>
+</body>
+</html>
