@@ -72,6 +72,15 @@ formality — one outcome makes the product simpler.
 Precision about your own evidence is the point. Two studies, seven briefs each, judged by one
 person: say so every time it is quoted.
 
+## Where things live
+
+| Repository | | Contents |
+|---|---|---|
+| [`appliedform/standards`](https://github.com/appliedform/standards) | public | **this one** — schema, compiler, MCP server, Instrument |
+| [`appliedform/standards-ui`](https://github.com/appliedform/standards-ui) | public | React target — the shared job contract and Instrument |
+| `appliedform/standards-packs` | private | the five systems for sale |
+| `appliedform/standards-internal` | private | proof, handoff, commercial, handover |
+
 ## The rest of the catalogue
 
 Five more systems — Broadsheet (editorial), Raw (neo-brutalist), Agitprop (constructivist),
