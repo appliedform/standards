@@ -25,7 +25,7 @@ Usage:
     python3 compile.py ../packs/instrument
     python3 compile.py --all ../packs
 """
-import argparse, os, re, sys
+import argparse, os, re, shutil, sys
 
 # Section routing. Order within each build is deliberate.
 CORE = [                      # always loaded, kept under the constraint budget
@@ -265,6 +265,48 @@ def build_reference(head, sections, name):
     return "\n".join(parts).rstrip() + "\n"
 
 
+def emit_distribution(d, slug, skill, compact, fm):
+    """Compile the pack to the two places a system is actually installed.
+
+    Both are generated from the same builds as everything else, so a system
+    cannot be correct in one target and stale in another. Nothing here is
+    hand-written; `dist/` is regenerated on every run.
+
+      dist/claude/<slug>/SKILL.md   an Agent Skill. SKILL.md already carries the
+                                    name and description in its frontmatter, so
+                                    the work is bundling it with its assets.
+      dist/cursor/<slug>.mdc        a Cursor rule. The compact build is used: a
+                                    rule sits in context permanently, which is
+                                    the case the compact build exists for.
+    """
+    dist = os.path.join(d, "dist")
+    claude_dir = os.path.join(dist, "claude", slug)
+    cursor_dir = os.path.join(dist, "cursor")
+    os.makedirs(claude_dir, exist_ok=True)
+    os.makedirs(cursor_dir, exist_ok=True)
+
+    open(os.path.join(claude_dir, "SKILL.md"), "w", encoding="utf-8").write(skill)
+    assets = os.path.join(d, "assets")
+    if os.path.isdir(assets):
+        target = os.path.join(claude_dir, "assets")
+        os.makedirs(target, exist_ok=True)
+        for f in sorted(os.listdir(assets)):
+            src_f = os.path.join(assets, f)
+            if os.path.isfile(src_f):
+                shutil.copyfile(src_f, os.path.join(target, f))
+
+    # Cursor wants its own frontmatter. Take the description from the source's,
+    # rather than restating it, so the two cannot drift.
+    desc = ""
+    m = re.search(r'^description:\s*"?(.*?)"?\s*$', fm, re.M)
+    if m:
+        desc = m.group(1)
+    rule = (f"---\ndescription: {desc}\nglobs:\nalwaysApply: false\n---\n\n"
+            + compact.split("---\n", 2)[-1].lstrip())
+    open(os.path.join(cursor_dir, f"{slug}.mdc"), "w", encoding="utf-8").write(rule)
+    return 2
+
+
 def compile_pack(d, quiet=False):
     src = os.path.join(d, "SOURCE.md")
     if not os.path.exists(src):
@@ -284,6 +326,8 @@ def compile_pack(d, quiet=False):
     open(os.path.join(d, "SKILL-compact.md"), "w", encoding="utf-8").write(compact)
     open(os.path.join(d, "REFERENCE.md"), "w", encoding="utf-8").write(reference)
 
+    slug_for_dist = os.path.basename(os.path.normpath(d))
+    n_dist = emit_distribution(d, slug_for_dist, skill, compact, fm)
     c_src = count_constraints(open(src, encoding="utf-8").read())
     c_core = count_constraints(skill)      # identical statements dedupe, so the
     c_comp = count_constraints(compact)    # floors restated at both ends count once
@@ -292,7 +336,8 @@ def compile_pack(d, quiet=False):
     if not quiet:
         flag = "OVER" if over else "ok  "
         print(f"  {flag} {name:11s} source {c_src:3d} -> core {c_core:3d} · compact {c_comp:3d} "
-              f"(budget {BUDGET})   json: {n_col} tokens, {n_arch} moves")
+              f"(budget {BUDGET})   json: {n_col} tokens, {n_arch} moves, "
+              f"dist: {n_dist} targets")
     return c_core, c_comp, over
 
 

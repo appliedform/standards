@@ -38,9 +38,24 @@ schema/
   RUNNING-THE-STUDY.md  the run sheet. One sitting, under a dollar
 
 packs/instrument/       technical modernism. Free, complete, CC BY 4.0
+  dist/claude/          the pack as an Agent Skill, with its assets
+  dist/cursor/          the pack as a Cursor rule (.mdc)
 mcp/server.py           MCP server. Standard library only, stdio
 tests/check.py          the checks CI runs. No dependencies
 ```
+
+## Installing a system
+
+Every pack compiles to the places a system is actually installed. Nothing in `dist/` is
+written by hand; it is regenerated on every run, so a system cannot be current in one target
+and stale in another.
+
+| Target | Path | Notes |
+|---|---|---|
+| **Claude Agent Skill** | `packs/<pack>/dist/claude/<pack>/` | `SKILL.md` plus the pack's assets. Drop the directory into your skills folder |
+| **Cursor rule** | `packs/<pack>/dist/cursor/<pack>.mdc` | Put it in `.cursor/rules/`. Uses the compact build, because a rule sits in context permanently |
+| **MCP** | `mcp/server.py` | Serves every pack to any MCP client |
+| **Tokens / charts** | `packs/<pack>/assets/` | CSS custom properties, chart theme, matplotlib style |
 
 ## The one rule
 

@@ -65,9 +65,14 @@ def _():
     themselves. Comparing against git HEAD instead would report every
     work-in-progress edit as drift, and would say nothing at all outside a
     repository."""
-    builds = sorted(f for f in glob.glob(os.path.join(ROOT, "packs", "*", "*"))
-                    if os.path.basename(f) != "SOURCE.md"
-                    and f.endswith((".md", ".json")))
+    # Generated: the top-level builds, and everything under dist/. Not
+    # assets/, which is hand-maintained source alongside SOURCE.md.
+    builds = sorted(
+        [f for f in glob.glob(os.path.join(ROOT, "packs", "*", "*"))
+         if os.path.basename(f) != "SOURCE.md" and f.endswith((".md", ".json"))]
+        + [f for f in glob.glob(os.path.join(ROOT, "packs", "*", "dist", "**", "*"),
+                                recursive=True) if os.path.isfile(f)]
+    )
     assert builds, "no build outputs found"
     before = {f: open(f, "rb").read() for f in builds}
     r = run(sys.executable, "schema/compile.py", "--all", "packs")
